@@ -2,7 +2,7 @@
   "files": [
     ".gitattributes",
     ".github/pull_request_template.md",
-    ".github/workflows/build_cdk-demo.yml",
+    ".github/workflows/build-cdk-demo.yml",
     ".github/workflows/build.yml",
     ".github/workflows/pull-request-lint.yml",
     ".github/workflows/release.yml",

@@ -2,12 +2,6 @@ const { JobPermission } = require('projen/lib/github/workflows-model');
 const { NodeProject } = require('projen/lib/javascript');
 const AUTOMATION_TOKEN = 'PROJEN_GITHUB_TOKEN';
 
-// declare module 'projen' {
-//   interface Project {
-//     addUpgradeSiteWorkflow(projectName: string): void;
-//   }
-// }
-
 NodeProject.prototype.addUpgradeSiteWorkflow = function (projectName) {
   const upgradeSite = this.github.addWorkflow('upgrade-' + projectName);
   upgradeSite.on({ schedule: [{ cron: '0 0 * * 1' }], workflowDispatch: {} });
@@ -49,6 +43,120 @@ NodeProject.prototype.addUpgradeSiteWorkflow = function (projectName) {
             'committer': 'github-actions <github-actions@github.com>',
             'signoff': true,
           },
+        },
+      ],
+    },
+  });
+};
+
+NodeProject.prototype.addBuildWorkflow = function (projectName) {
+  const buildWorkflow = this.github.addWorkflow('build-' + projectName);
+  buildWorkflow.on({ pullRequest: {}, workflowDispatch: {} });
+
+  buildWorkflow.addJobs({
+    'build': {
+      runsOn: 'ubuntu-latest',
+      permissions: {
+        contents: JobPermission.WRITE,
+      },
+      env: {
+        CI: 'true',
+      },
+      steps: [
+        {
+          name: 'Checkout',
+          uses: 'actions/checkout@v4',
+          with: {
+            ref: '${{ github.event.pull_request.head.ref }}',
+            repository: '${{ github.event.pull_request.head.repo.full_name }}',
+          },
+        },
+        {
+          name: 'Install dependencies',
+          run: 'yarn install --check-files',
+          workingDirectory: projectName,
+        },
+        {
+          name: 'Build',
+          run: 'npx projen build',
+          workingDirectory: projectName,
+        },
+        {
+          name: 'Find mutations',
+          id: 'self_mutation',
+          run: `
+            git add .
+            git diff --staged --patch --exit-code > .repo.patch || echo "self_mutation_happened=true" >> $GITHUB_OUTPUT
+          `,
+          workingDirectory: projectName,
+        },
+        {
+          name: 'Upload patch',
+          if: 'steps.self_mutation.outputs.self_mutation_happened',
+          uses: 'actions/upload-artifact@v4',
+          with: {
+            name: '.repo.patch',
+            path: '.repo.patch',
+            overwrite: true,
+          },
+        },
+        {
+          name: 'Fail build on mutation',
+          if: 'steps.self_mutation.outputs.self_mutation_happened',
+          run: `
+            echo "::error::Files were changed during build (see build log). If this was triggered from a fork, you will need to update your branch."
+            cat .repo.patch
+            exit 1
+          `,
+        },
+      ],
+    },
+    'self-mutation': {
+      needs: 'build',
+      runsOn: 'ubuntu-latest',
+      permissions: {
+        contents: JobPermission.WRITE,
+      },
+      if: 'always() && needs.build.outputs.self_mutation_happened && !(github.event.pull_request.head.repo.full_name != github.repository)',
+      steps: [
+        {
+          name: 'Checkout',
+          uses: 'actions/checkout@v4',
+          with: {
+            token: '${{ secrets.' + AUTOMATION_TOKEN + ' }}',
+            ref: '${{ github.event.pull_request.head.ref }}',
+            repository: '${{ github.event.pull_request.head.repo.full_name }}',
+          },
+        },
+        {
+          name: 'Download patch',
+          uses: 'actions/download-artifact@v4',
+          with: {
+            name: '.repo.patch',
+            path: '${{ runner.temp }}',
+          },
+        },
+        {
+          name: 'Apply patch',
+          run: '[ -s ${{ runner.temp }}/.repo.patch ] && git apply ${{ runner.temp }}/.repo.patch || echo "Empty patch. Skipping."',
+        },
+        {
+          name: 'Set git identity',
+          run: `
+            git config user.name "github-actions"
+            git config user.email "github-actions@github.com"
+          `,
+        },
+        {
+          name: 'Push changes',
+          env: {
+            PULL_REQUEST_REF: '${{ github.event.pull_request.head.ref }}',
+          },
+          run: `
+            git add .
+            git commit -s -m "chore: self mutation"
+            git push origin HEAD:$PULL_REQUEST_REF
+          `,
         },
       ],
     },

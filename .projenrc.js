@@ -1,5 +1,6 @@
 const { AwsCdkTypeScriptApp } = require('projen/lib/awscdk');
 const addUpgradeSiteWorkflow = require('./workflows.ts');
+const addBuildWorkflow = require('./workflows.ts');
 const { NodeProject } = require('projen/lib/javascript');
 const { UpgradeDependenciesSchedule } = require('projen/lib/javascript');
 
@@ -29,7 +30,6 @@ const cdkDemoProject = new AwsCdkTypeScriptApp({
     allowedUsernames: ['schuettc'],
   },
   autoApproveUpgrades: true,
-  buildWorkflow: true,
   depsUpgrade: true,
 });
 
@@ -38,6 +38,7 @@ cdkDemoProject.addTask(`launch:${cdkDemoProject.name}`, {
 });
 
 root.addUpgradeSiteWorkflow('cdk-demo');
+root.addBuildWorkflow('cdk-demo');
 
 const common_exclude = [
   '.yalc',
