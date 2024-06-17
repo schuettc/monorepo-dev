@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
+      # - name: Use Node.js ${{ matrix.node-version }}
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: ${{ matrix.node-version }}
       - uses: actions/setup-python@v4
         with:
-          python-version: 3.x
+          python-version: 3.11
       - run: pip install mkdocs-material
       - run: pip install mkdocs-glightbox
       - run: pip install mkdocs-minify-plugin
@@ -24,7 +24,7 @@ jobs:
       - run: pip install pillow cairosvg
 
       # CDK API reference
-      - run: npm install
+      # - run: npm install
       # - run: npx typedoc --out docs/api src/index.ts
 
       # docs  deploy
