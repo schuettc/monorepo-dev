@@ -25,7 +25,7 @@ jobs:
 
       # CDK API reference
       - run: npm install
-      - run: npx typedoc --out docs/api src/index.ts
+      # - run: npx typedoc --out docs/api src/index.ts
 
       # docs  deploy
       - run: mkdocs gh-deploy --force
