@@ -56,12 +56,12 @@ const common_exclude = [
   'cdk-neg-output.txt',
 ];
 
-cdkDemoProject.tsconfigDev.file.addOverride('include', [
-  './.projenrc.ts',
-  './workflows.ts',
-  './cdk-demo/**/*.ts',
-  './cdk-demo/*.ts',
-]);
+cdkDemoProject.tsconfigDev.file.addOverride('include', ['src/*.ts']);
+
+// root.tsconfigDev.file.addOverride('include', [
+//   './.projenrc.ts',
+//   './workflows.ts',
+// ]);
 
 cdkDemoProject.eslint.addOverride({
   files: ['./*.ts'],
