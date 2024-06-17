@@ -1,6 +1,6 @@
-import { AwsCdkTypeScriptApp } from 'projen/lib/awscdk';
-import './workflows';
-import { NodeProject } from 'projen/lib/javascript';
+const { AwsCdkTypeScriptApp } = require('projen/lib/awscdk');
+const addUpgradeSiteWorkflow = require('./workflows.ts');
+const { NodeProject } = require('projen/lib/javascript');
 const { UpgradeDependenciesSchedule } = require('projen/lib/javascript');
 
 const root = new NodeProject({
@@ -62,7 +62,7 @@ cdkDemoProject.tsconfigDev.file.addOverride('include', [
   './cdk-demo/*.ts',
 ]);
 
-cdkDemoProject.eslint!.addOverride({
+cdkDemoProject.eslint.addOverride({
   files: ['./*.ts'],
   rules: {
     '@typescript-eslint/no-require-imports': 'off',

@@ -1,15 +1,15 @@
-import { JobPermission } from 'projen/lib/github/workflows-model';
-import { NodeProject } from 'projen/lib/javascript';
+const { JobPermission } = require('projen/lib/github/workflows-model');
+const { NodeProject } = require('projen/lib/javascript');
 const AUTOMATION_TOKEN = 'PROJEN_GITHUB_TOKEN';
 
-declare module 'projen' {
-  interface Project {
-    addUpgradeSiteWorkflow(projectName: string): void;
-  }
-}
+// declare module 'projen' {
+//   interface Project {
+//     addUpgradeSiteWorkflow(projectName: string): void;
+//   }
+// }
 
-NodeProject.prototype.addUpgradeSiteWorkflow = function (projectName: string) {
-  const upgradeSite = this.github!.addWorkflow('upgrade-' + projectName);
+NodeProject.prototype.addUpgradeSiteWorkflow = function (projectName) {
+  const upgradeSite = this.github.addWorkflow('upgrade-' + projectName);
   upgradeSite.on({ schedule: [{ cron: '0 0 * * 1' }], workflowDispatch: {} });
 
   upgradeSite.addJobs({
