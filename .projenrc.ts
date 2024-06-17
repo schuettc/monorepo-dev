@@ -1,8 +1,7 @@
 import { cdk } from 'projen';
 import { AwsCdkTypeScriptApp } from 'projen/lib/awscdk';
-const { JobPermission } = require('projen/lib/github/workflows-model');
+import './workflows';
 const { UpgradeDependenciesSchedule } = require('projen/lib/javascript');
-const AUTOMATION_TOKEN = 'PROJEN_GITHUB_TOKEN';
 
 const root = new cdk.JsiiProject({
   author: 'Court Schuett',
@@ -11,11 +10,12 @@ const root = new cdk.JsiiProject({
   jsiiVersion: '~5.4.0',
   name: 'anthropic-on-aws-dev',
   projenrcTs: true,
+  sampleCode: false,
   jest: false,
   repositoryUrl: 'https://github.com/schuettc/anthropic-on-aws-dev.git',
 });
 
-new AwsCdkTypeScriptApp({
+const cdkDemoProject = new AwsCdkTypeScriptApp({
   parent: root,
   cdkVersion: '2.130.0',
   defaultReleaseBranch: 'main',
@@ -23,8 +23,9 @@ new AwsCdkTypeScriptApp({
   name: 'cdk-demo',
   devDeps: ['esbuild', 'cdk-nag'],
   deps: ['dotenv', 'fs-extra', '@types/fs-extra', '@types/aws-lambda'],
-  appEntrypoint: 'claude-tools-chatbot.ts',
+  appEntrypoint: 'cdk-demo.ts',
   depsUpgradeOptions: {
+    workflow: true,
     workflowOptions: {
       labels: ['auto-approve', 'auto-merge'],
       schedule: UpgradeDependenciesSchedule.WEEKLY,
@@ -35,7 +36,15 @@ new AwsCdkTypeScriptApp({
     allowedUsernames: ['schuettc'],
   },
   autoApproveUpgrades: true,
+  buildWorkflow: true,
+  depsUpgrade: true,
 });
+
+cdkDemoProject.addTask(`launch:${cdkDemoProject.name}`, {
+  exec: 'yarn cdk bootstrap && yarn cdk deploy  --require-approval never && yarn configLocal',
+});
+
+root.addUpgradeSiteWorkflow('cdk-demo');
 
 const common_exclude = [
   '.yalc',
@@ -52,6 +61,21 @@ const common_exclude = [
   '.graphqlconfig.yaml',
   'cdk-neg-output.txt',
 ];
+
+root.tsconfigDev.file.addOverride('include', [
+  './.projenrc.ts',
+  './workflows.ts',
+  './cdk-demo/**/*.ts',
+  './cdk-demo/*.ts',
+]);
+
+root.eslint!.addOverride({
+  files: ['./*.ts'],
+  rules: {
+    '@typescript-eslint/no-require-imports': 'off',
+    'import/no-extraneous-dependencies': 'off',
+  },
+});
 
 root.gitignore.exclude(...common_exclude);
 root.synth();

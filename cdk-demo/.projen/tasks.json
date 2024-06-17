@@ -96,6 +96,14 @@
         }
       ]
     },
+    "launch:cdk-demo": {
+      "name": "launch:cdk-demo",
+      "steps": [
+        {
+          "exec": "yarn cdk bootstrap && yarn cdk deploy  --require-approval never && yarn configLocal"
+        }
+      ]
+    },
     "package": {
       "name": "package",
       "description": "Creates the distribution package"
