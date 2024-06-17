@@ -1,5 +1,6 @@
 const { NodeProject } = require('projen/lib/javascript');
 const cdkDemoConfig = require('./subprojects/cdk-demo');
+const cookbookProject = require('./subprojects/cookbooks');
 
 const root = new NodeProject({
   name: 'monorepo-dev',
@@ -11,6 +12,7 @@ const root = new NodeProject({
 });
 
 cdkDemoConfig(root);
+cookbookProject(root);
 
 const common_exclude = [
   '.yalc',
@@ -20,11 +22,6 @@ const common_exclude = [
   'dependabot.yml',
   '.DS_Store',
   '.venv',
-  'src/resources/resolverLambda/bin/**',
-  'src/resources/resolverLambda/lib/**',
-  'src/resources/initializerLambda/bin/**',
-  'src/resources/initializerLambda/lib/**',
-  '.graphqlconfig.yaml',
   'cdk-nag-output.txt',
 ];
 

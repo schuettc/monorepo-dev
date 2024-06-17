@@ -49,10 +49,5 @@ yarn-error.log
 dependabot.yml
 .DS_Store
 .venv
-src/resources/resolverLambda/bin/**
-src/resources/resolverLambda/lib/**
-src/resources/initializerLambda/bin/**
-src/resources/initializerLambda/lib/**
-.graphqlconfig.yaml
 cdk-nag-output.txt
 !/.projenrc.js

@@ -44,5 +44,7 @@ module.exports = function (root) {
   root.addUpgradeSiteWorkflow('cdk-demo');
   root.addBuildWorkflow('cdk-demo');
 
+  cdkDemoProject.synth();
+
   return cdkDemoProject;
 };
