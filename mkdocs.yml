@@ -6,7 +6,7 @@ plugins:
   - glightbox
   - minify:
       minify_html: true
-  - mkdocs-material-extensions: footnotes
+  # - mkdocs-material-extensions: footnotes
 nav:
   - Home: index.md
   - API Reference: api/
