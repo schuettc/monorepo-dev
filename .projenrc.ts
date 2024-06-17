@@ -1,18 +1,11 @@
-import { cdk } from 'projen';
 import { AwsCdkTypeScriptApp } from 'projen/lib/awscdk';
 import './workflows';
+import { NodeProject } from 'projen/lib/javascript';
 const { UpgradeDependenciesSchedule } = require('projen/lib/javascript');
 
-const root = new cdk.JsiiProject({
-  author: 'Court Schuett',
-  authorAddress: 'schuettc@amazon.com',
+const root = new NodeProject({
+  name: 'monorepo-dev',
   defaultReleaseBranch: 'main',
-  jsiiVersion: '~5.4.0',
-  name: 'anthropic-on-aws-dev',
-  projenrcTs: true,
-  sampleCode: false,
-  jest: false,
-  repositoryUrl: 'https://github.com/schuettc/anthropic-on-aws-dev.git',
 });
 
 const cdkDemoProject = new AwsCdkTypeScriptApp({
@@ -62,14 +55,14 @@ const common_exclude = [
   'cdk-neg-output.txt',
 ];
 
-root.tsconfigDev.file.addOverride('include', [
+cdkDemoProject.tsconfigDev.file.addOverride('include', [
   './.projenrc.ts',
   './workflows.ts',
   './cdk-demo/**/*.ts',
   './cdk-demo/*.ts',
 ]);
 
-root.eslint!.addOverride({
+cdkDemoProject.eslint!.addOverride({
   files: ['./*.ts'],
   rules: {
     '@typescript-eslint/no-require-imports': 'off',

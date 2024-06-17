@@ -26,8 +26,10 @@
     "target": "ES2019"
   },
   "include": [
-    "src/**/*.ts",
-    "test/**/*.ts"
+    "./.projenrc.ts",
+    "./workflows.ts",
+    "./cdk-demo/**/*.ts",
+    "./cdk-demo/*.ts"
   ],
   "exclude": [
     "node_modules"
