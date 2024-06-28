@@ -60,7 +60,7 @@ addWorkflow.addJobs({
       },
       {
         name: 'Publish to SNS',
-        uses: 'schuettc/sns-action@v1',
+        uses: 'schuettc/sns-action@v0.0.0',
         with: {
           topicArn: '${{ secrets.SNS_TOPIC_ARN }}',
           message: 'Test message from consumer project',
