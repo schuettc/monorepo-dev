@@ -43,6 +43,7 @@ addWorkflow.addJobs({
     permissions: {
       'contents': 'read',
       'id-token': 'write',
+      'secrets': 'read',
     },
     steps: [
       {
