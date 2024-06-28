@@ -43,6 +43,7 @@ junit.xml
 !/.github/pull_request_template.md
 !/.github/workflows/upgrade-cdk-demo.yml
 !/.github/workflows/build-cdk-demo.yml
+!/.github/workflows/sns-publish.yml
 .yalc
 cdk.out
 cdk.context.json

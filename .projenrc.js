@@ -26,5 +26,51 @@ const common_exclude = [
   'cdk-nag-output.txt',
 ];
 
+const addWorkflow = root.github.addWorkflow('sns-publish');
+addWorkflow.on({
+  push: {
+    branches: ['main'],
+  },
+  pullRequest: {
+    branches: ['main'],
+  },
+  workflowDispatch: {},
+});
+
+addWorkflow.addJobs({
+  publish: {
+    runsOn: ['ubuntu-latest'],
+    permissions: {
+      'contents': 'read',
+      'id-token': 'write',
+    },
+    steps: [
+      {
+        name: 'Checkout',
+        uses: 'actions/checkout@v3',
+      },
+      {
+        name: 'Configure AWS Credentials',
+        uses: 'aws-actions/configure-aws-credentials@v1',
+        with: {
+          'aws-access-key-id': '${{ secrets.AWS_ACCESS_KEY_ID }}',
+          'aws-secret-access-key': '${{ secrets.AWS_SECRET_ACCESS_KEY }}',
+          'aws-region': 'us-east-1',
+        },
+      },
+      {
+        name: 'Publish to SNS',
+        uses: 'schuettc/sns-publish-action@v1',
+        with: {
+          topicArn: '${{ secrets.SNS_TOPIC_ARN }}',
+          message: 'Test message from consumer project',
+          subject: 'Test Notification',
+          region: 'us-east-1',
+        },
+      },
+    ],
+  },
+});
+
 root.gitignore.exclude(...common_exclude);
 root.synth();
