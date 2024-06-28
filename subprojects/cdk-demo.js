@@ -1,6 +1,6 @@
 const { AwsCdkTypeScriptApp } = require('projen/lib/awscdk');
 const { UpgradeDependenciesSchedule } = require('projen/lib/javascript');
-const addUpgradeSiteWorkflow = require('../workflows.ts');
+const addUpgradeProjectWorkflow = require('../workflows.ts');
 const addBuildWorkflow = require('../workflows.ts');
 
 module.exports = function (root) {
@@ -41,7 +41,7 @@ module.exports = function (root) {
     },
   });
 
-  root.addUpgradeSiteWorkflow('cdk-demo');
+  root.addUpgradeProjectWorkflow('cdk-demo', 'cdk-demo/site');
   root.addBuildWorkflow('cdk-demo');
 
   cdkDemoProject.synth();

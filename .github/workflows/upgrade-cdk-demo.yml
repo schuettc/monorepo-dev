@@ -22,7 +22,7 @@ jobs:
       - run: yarn install --check-files --frozen-lockfile
         working-directory: cdk-demo
       - run: yarn upgrade
-        working-directory: cdk-demo
+        working-directory: cdk-demo/site
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:

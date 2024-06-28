@@ -2,11 +2,17 @@ const { JobPermission } = require('projen/lib/github/workflows-model');
 const { NodeProject } = require('projen/lib/javascript');
 const AUTOMATION_TOKEN = 'PROJEN_GITHUB_TOKEN';
 
-NodeProject.prototype.addUpgradeSiteWorkflow = function (projectName) {
-  const upgradeSite = this.github.addWorkflow('upgrade-' + projectName);
-  upgradeSite.on({ schedule: [{ cron: '0 0 * * 1' }], workflowDispatch: {} });
+NodeProject.prototype.addUpgradeProjectWorkflow = function (
+  projectName,
+  directory,
+) {
+  const upgradeProject = this.github.addWorkflow('upgrade-' + projectName);
+  upgradeProject.on({
+    schedule: [{ cron: '0 0 * * 1' }],
+    workflowDispatch: {},
+  });
 
-  upgradeSite.addJobs({
+  upgradeProject.addJobs({
     [`upgrade-${projectName}`]: {
       runsOn: ['ubuntu-latest'],
       name: `upgrade-${projectName}`,
@@ -28,7 +34,7 @@ NodeProject.prototype.addUpgradeSiteWorkflow = function (projectName) {
           run: 'yarn install --check-files --frozen-lockfile',
           workingDirectory: projectName,
         },
-        { run: 'yarn upgrade', workingDirectory: projectName },
+        { run: 'yarn upgrade', workingDirectory: directory },
         {
           name: 'Create Pull Request',
           uses: 'peter-evans/create-pull-request@v4',

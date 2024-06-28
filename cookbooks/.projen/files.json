@@ -1,6 +1,5 @@
 {
   "files": [
-    ".devcontainer.json",
     ".gitattributes",
     ".github/workflows/pull-request-lint.yml",
     ".gitignore",

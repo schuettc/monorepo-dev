@@ -8,6 +8,7 @@ const root = new NodeProject({
   license: 'MIT-0',
   author: 'Court Schuett',
   copyrightOwner: 'Amazon.com, Inc.',
+  gitpod: true,
   authorAddress: 'https://aws.amazon.com',
 });
 

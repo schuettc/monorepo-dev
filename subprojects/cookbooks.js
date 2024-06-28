@@ -7,7 +7,6 @@ module.exports = function (root) {
     name: 'cookbooks',
     authorEmail: 'schuettc@amazon.com',
     authorName: 'Court Schuett',
-    devContainer: true,
     gitpod: true,
     moduleName: 'cookbooks',
     projenrcTs: true,
